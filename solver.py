@@ -19,12 +19,12 @@ YELLOW = (255, 255, 0)
 LIGHT_GREY = (150, 150, 150)
 
 # Grid setup
-# Grid setup
 tile_size = 80
 rows = WINDOW_HEIGHT // tile_size
 cols = WINDOW_WIDTH // tile_size
 FPS = 60
 clock = pygame.time.Clock()
+
 
 # Font for island numbers
 font = pygame.font.Font(None, 36)
@@ -75,6 +75,22 @@ class Island:
     def __repr__(self):
         return f"Island({self.row},{self.col},{self.required_degree})"
 
+def draw_grid(tile_size):
+    """Draw semi-transparent grid lines"""
+    # Create a transparent surface for the grid
+    grid_surface = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.SRCALPHA)
+    
+    # Draw grid lines with transparency (RGBA - last value is alpha/transparency)
+    grid_color = (100, 100, 100, 80)  
+    
+    for x in range(tile_size, WINDOW_WIDTH, tile_size):
+        pygame.draw.line(grid_surface, grid_color, (x, 0), (x, WINDOW_HEIGHT), 1)
+    for y in range(tile_size, WINDOW_HEIGHT, tile_size):
+        pygame.draw.line(grid_surface, grid_color, (0, y), (WINDOW_WIDTH, y), 1)
+    
+    # Blit the transparent grid onto the screen
+    screen.blit(grid_surface, (0, 0))
+
 def show_mode_screen(mode_name):
     """Simple feedback screen shown when a mode is selected.
 
@@ -92,6 +108,8 @@ def show_mode_screen(mode_name):
                     return
 
         screen.fill((16, 24, 32))
+        # draw the grid overlay
+        draw_grid(tile_size)
         text = font.render(f"{mode_name} Mode", True, (255, 255, 255))
         instr = small.render("Press ESC to return to the main menu", True, (200, 200, 200))
         screen.blit(text, (WINDOW_WIDTH // 2 - text.get_width() // 2, WINDOW_HEIGHT // 2 - 60))
