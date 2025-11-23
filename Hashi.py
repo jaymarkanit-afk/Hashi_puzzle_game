@@ -72,14 +72,14 @@ def main_menu():
     """
     font = pygame.font.SysFont(None, 55)
     small_font = pygame.font.SysFont(None, 28)
-    title_font = pygame.font.SysFont(None, 86)
+    title_font = pygame.font.SysFont(None, 86, bold=True)
 
 
     # Button layout
     btn_width = 320
     btn_height = 60
     btn_x = WINDOW_WIDTH // 2 - btn_width // 2
-    btn_y_start = 240
+    btn_y_start = 290
     btn_gap = 20
 
     easy_rect = pygame.Rect(btn_x, btn_y_start, btn_width, btn_height)
