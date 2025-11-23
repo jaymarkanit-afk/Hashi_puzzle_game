@@ -26,6 +26,55 @@ cols = WINDOW_WIDTH // tile_size
 FPS = 60
 clock = pygame.time.Clock()
 
+# Font for island numbers
+font = pygame.font.Font(None, 36)
+small_font = pygame.font.Font(None, 24)
+
+# ========== ISLAND AND GRAPH CLASSES ==========
+class Island:
+    """Represents an island node in the puzzle"""
+    def __init__(self, row, col, required_degree):
+        self.row = row
+        self.col = col
+        self.required_degree = required_degree
+        self.neighbors = {}  
+        self.x = col * tile_size + tile_size // 2
+        self.y = row * tile_size + tile_size // 2
+    
+    def get_current_degree(self):
+        """Returns sum of all bridges connected to this island"""
+        return sum(self.neighbors.values())
+    
+    def can_add_bridge(self, other_island, bridges):
+        """Check if we can add a bridge to another island"""
+        current = self.neighbors.get(other_island, 0)
+        if current >= 2: 
+            return False
+        if self.get_current_degree() >= self.required_degree:
+            return False
+        if other_island.get_current_degree() >= other_island.required_degree:
+            return False
+        return True
+    
+    def add_bridge(self, other_island):
+        """Add a bridge connection"""
+        self.neighbors[other_island] = self.neighbors.get(other_island, 0) + 1
+        other_island.neighbors[self] = other_island.neighbors.get(self, 0) + 1
+    
+    def remove_bridge(self, other_island):
+        """Remove a bridge connection"""
+        if other_island in self.neighbors:
+            self.neighbors[other_island] -= 1
+            if self.neighbors[other_island] == 0:
+                del self.neighbors[other_island]
+        if self in other_island.neighbors:
+            other_island.neighbors[self] -= 1
+            if other_island.neighbors[self] == 0:
+                del other_island.neighbors[self]
+    
+    def __repr__(self):
+        return f"Island({self.row},{self.col},{self.required_degree})"
+
 def show_mode_screen(mode_name):
     """Simple feedback screen shown when a mode is selected.
 
