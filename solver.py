@@ -5,7 +5,6 @@ pygame.init()
 WINDOW_WIDTH = 880
 WINDOW_HEIGHT = 720
 screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-pygame.display.set_caption("Hashi (Bridges) Puzzle Game - AI Solver Edition")
 
 # Colors
 WHITE = (255, 255, 255)
@@ -29,6 +28,19 @@ clock = pygame.time.Clock()
 # Font for island numbers
 font = pygame.font.Font(None, 36)
 small_font = pygame.font.Font(None, 24)
+
+# Island matrix for the puzzle 
+island_matrix = [
+    [2, 0, 0, 0, 0, 4, 0, 5, 0, 0, 4],  # row 0 (islands)
+    [0, 4, 0, 4, 0, 0, 0, 0, 0, 1, 0],  # row 1
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # row 2
+    [0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 3],  # row 3
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # row 4
+    [0, 2, 0, 0, 0, 0, 0, 2, 0, 0, 2],  # row 5
+    [0, 0, 0, 4, 0, 6, 0, 0, 0, 4, 0],  # row 6
+    [3, 0, 0, 0, 0, 0, 2, 0, 0, 0, 1],  # row 7
+    [0, 0, 2, 0, 0, 0, 0, 0, 0, 3, 0],  # row 8
+]
 
 # ========== ISLAND AND GRAPH CLASSES ==========
 class Island:
@@ -74,7 +86,29 @@ class Island:
     
     def __repr__(self):
         return f"Island({self.row},{self.col},{self.required_degree})"
+    
+class HashiGame:
+    """Main game class handling the puzzle logic"""
+    def __init__(self, matrix):
+        self.matrix = matrix
+        self.islands = []
+        self.island_grid = {}  
+        self.selected_island = None
+        self.ai_mode = False
+        self.show_hints = False
+        self.solution_steps = []
+        self.step_index = 0
+        self.message = "Click islands to connect with bridges!"
+        self.message_color = WHITE
+        
+        for row in range(len(matrix)):
+            for col in range(len(matrix[row])):
+                if matrix[row][col] > 0:
+                    island = Island(row, col, matrix[row][col])
+                    self.islands.append(island)
+                    self.island_grid[(row, col)] = island
 
+# ========== DRAWING FUNCTIONS ==========
 def draw_grid(tile_size):
     """Draw semi-transparent grid lines"""
     # Create a transparent surface for the grid
@@ -90,6 +124,9 @@ def draw_grid(tile_size):
     
     # Blit the transparent grid onto the screen
     screen.blit(grid_surface, (0, 0))
+
+
+game = HashiGame(island_matrix)
 
 def show_mode_screen(mode_name):
     """Simple feedback screen shown when a mode is selected.

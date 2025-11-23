@@ -6,6 +6,8 @@ pygame.init()
 WINDOW_WIDTH = 880
 WINDOW_HEIGHT = 720
 screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+pygame.display.set_caption("Hashi Puzzle Game")
+
 
 # Prefer jpg then png.
 BG = None
@@ -24,14 +26,17 @@ if BG:
         pass
 
 def easy_mode():
+    pygame.display.set_caption("Easy Mode - Hashi Puzzle Game")
     show_mode_screen("Easy")
 
 
 def medium_mode():
+    pygame.display.set_caption("Medium Mode - Hashi Puzzle Game")
     show_mode_screen("Medium")
 
 
 def hard_mode():
+    pygame.display.set_caption("Hard Mode - Hashi Puzzle Game")
     show_mode_screen("Hard")
 
 
@@ -82,7 +87,7 @@ def main_menu():
                 elif hard_rect.collidepoint(event.pos):
                     hard_mode()
 
-        # Draw background (image if available, otherwise solid fill)
+        # Draw image background if available otherwise solid fill
         if BG:
             screen.blit(BG, (0, 0))
         else:
