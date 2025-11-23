@@ -6,14 +6,42 @@ WINDOW_WIDTH = 880
 WINDOW_HEIGHT = 720
 screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
+def show_mode_screen(mode_name):
+    """Simple feedback screen shown when a mode is selected.
+
+    Press ESC to return to the main menu.
+    """
+    font = pygame.font.SysFont(None, 72)
+    small = pygame.font.SysFont(None, 28)
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                return
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    return
+
+        screen.fill((16, 24, 32))
+        text = font.render(f"{mode_name} Mode", True, (255, 255, 255))
+        instr = small.render("Press ESC to return to the main menu", True, (200, 200, 200))
+        screen.blit(text, (WINDOW_WIDTH // 2 - text.get_width() // 2, WINDOW_HEIGHT // 2 - 60))
+        screen.blit(instr, (WINDOW_WIDTH // 2 - instr.get_width() // 2, WINDOW_HEIGHT // 2 + 20))
+        pygame.display.flip()
+        clock.tick(FPS)
+
+
 def easy_mode():
-    pass
+    show_mode_screen("Easy")
+
 
 def medium_mode():
-    pass
+    show_mode_screen("Medium")
+
 
 def hard_mode():
-    pass
+    show_mode_screen("Hard")
+
 
 FPS = 60
 clock = pygame.time.Clock()
@@ -22,14 +50,28 @@ running = True
 # == Main Menu ==
 
 def main_menu():
-    """Display the main menu and handle user input.
+    """Display the main menu and handle mouse-clickable buttons.
 
-    Press 1/2/3 to select difficulty. Close window or press ESC to quit.
+    Buttons highlight on hover and respond to left-click.
     """
     font = pygame.font.SysFont(None, 55)
-    small_font = pygame.font.SysFont(None, 30)
+    small_font = pygame.font.SysFont(None, 28)
+
+    # Button layout
+    btn_width = 320
+    btn_height = 60
+    btn_x = WINDOW_WIDTH // 2 - btn_width // 2
+    btn_y_start = 240
+    btn_gap = 20
+
+    easy_rect = pygame.Rect(btn_x, btn_y_start, btn_width, btn_height)
+    medium_rect = pygame.Rect(btn_x, btn_y_start + (btn_height + btn_gap), btn_width, btn_height)
+    hard_rect = pygame.Rect(btn_x, btn_y_start + 2 * (btn_height + btn_gap), btn_width, btn_height)
 
     while True:
+        mouse_pos = pygame.mouse.get_pos()
+        mouse_pressed = pygame.mouse.get_pressed()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -38,25 +80,31 @@ def main_menu():
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     return
-                if event.key == pygame.K_1:
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if easy_rect.collidepoint(event.pos):
                     easy_mode()
-                elif event.key == pygame.K_2:
+                elif medium_rect.collidepoint(event.pos):
                     medium_mode()
-                elif event.key == pygame.K_3:
+                elif hard_rect.collidepoint(event.pos):
                     hard_mode()
 
+        # Draw
         screen.fill((0, 0, 0))
         title_text = font.render("Hashi Puzzle Game", True, (255, 255, 255))
-        easy_text = font.render("1. Easy Mode", True, (255, 255, 255))
-        medium_text = font.render("2. Medium Mode", True, (255, 255, 255))
-        hard_text = font.render("3. Hard Mode", True, (255, 255, 255))
-        instruct = small_font.render("Press 1/2/3 to choose, ESC to quit", True, (200, 200, 200))
+        screen.blit(title_text, (WINDOW_WIDTH // 2 - title_text.get_width() // 2, 120))
 
-        screen.blit(title_text, (WINDOW_WIDTH // 2 - title_text.get_width() // 2, 100))
-        screen.blit(easy_text, (WINDOW_WIDTH // 2 - easy_text.get_width() // 2, 250))
-        screen.blit(medium_text, (WINDOW_WIDTH // 2 - medium_text.get_width() // 2, 350))
-        screen.blit(hard_text, (WINDOW_WIDTH // 2 - hard_text.get_width() // 2, 450))
-        screen.blit(instruct, (WINDOW_WIDTH // 2 - instruct.get_width() // 2, 540))
+        # Draw buttons with hover effect
+        for rect, text_str in ((easy_rect, "Easy Mode"), (medium_rect, "Medium Mode"), (hard_rect, "Hard Mode")):
+            is_hover = rect.collidepoint(mouse_pos)
+            color = (70, 130, 180) if is_hover else (40, 40, 40)
+            border = (200, 200, 200) if is_hover else (120, 120, 120)
+            pygame.draw.rect(screen, color, rect)
+            pygame.draw.rect(screen, border, rect, 2)
+            label = font.render(text_str, True, (255, 255, 255))
+            screen.blit(label, (rect.x + rect.width // 2 - label.get_width() // 2, rect.y + rect.height // 2 - label.get_height() // 2))
+
+        instruct = small_font.render("Click a button to start a mode, or press ESC to quit", True, (200, 200, 200))
+        screen.blit(instruct, (WINDOW_WIDTH // 2 - instruct.get_width() // 2, WINDOW_HEIGHT - 60))
 
         pygame.display.flip()
         clock.tick(FPS)
