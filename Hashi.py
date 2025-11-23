@@ -6,6 +6,22 @@ WINDOW_WIDTH = 880
 WINDOW_HEIGHT = 720
 screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
+# Prefer jpg then png.
+BG = None
+try:
+    BG = pygame.image.load("background.jpg").convert()
+except Exception:
+    try:
+        BG = pygame.image.load("background.png").convert()
+    except Exception:
+        BG = None
+
+if BG:
+    try:
+        BG = pygame.transform.scale(BG, (WINDOW_WIDTH, WINDOW_HEIGHT))
+    except Exception:
+        pass
+
 def show_mode_screen(mode_name):
     """Simple feedback screen shown when a mode is selected.
 
@@ -57,6 +73,7 @@ def main_menu():
     font = pygame.font.SysFont(None, 55)
     small_font = pygame.font.SysFont(None, 28)
 
+
     # Button layout
     btn_width = 320
     btn_height = 60
@@ -88,8 +105,11 @@ def main_menu():
                 elif hard_rect.collidepoint(event.pos):
                     hard_mode()
 
-        # Draw
-        screen.fill((0, 0, 0))
+        # Draw background (image if available, otherwise solid fill)
+        if BG:
+            screen.blit(BG, (0, 0))
+        else:
+            screen.fill((0, 0, 0))
         title_text = font.render("Hashi Puzzle Game", True, (255, 255, 255))
         screen.blit(title_text, (WINDOW_WIDTH // 2 - title_text.get_width() // 2, 120))
 
