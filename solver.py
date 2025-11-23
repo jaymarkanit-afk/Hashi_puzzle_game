@@ -125,6 +125,31 @@ def draw_grid(tile_size):
     # Blit the transparent grid onto the screen
     screen.blit(grid_surface, (0, 0))
 
+def draw_islands(game):
+    """Draw all islands with their numbers"""
+    for island in game.islands:
+        # Determine island color based on status
+        current_degree = island.get_current_degree()
+        if current_degree == island.required_degree:
+            color = GREEN
+        elif current_degree > island.required_degree:
+            color = RED
+        else:
+            color = WHITE
+        
+        # Highlight selected island
+        if island == game.selected_island:
+            pygame.draw.circle(screen, YELLOW, (island.x, island.y), tile_size // 3 + 5)
+        
+        # Draw the island circle
+        pygame.draw.circle(screen, color, (island.x, island.y), tile_size // 3)
+        pygame.draw.circle(screen, BLACK, (island.x, island.y), tile_size // 3, 2)
+        
+        # Draw the required degree number
+        text = font.render(str(island.required_degree), True, BLACK)
+        text_rect = text.get_rect(center=(island.x, island.y))
+        screen.blit(text, text_rect)
+
 
 game = HashiGame(island_matrix)
 
@@ -147,6 +172,8 @@ def show_mode_screen(mode_name):
         screen.fill((16, 24, 32))
         # draw the grid overlay
         draw_grid(tile_size)
+        draw_islands(game)
+        
         text = font.render(f"{mode_name} Mode", True, (255, 255, 255))
         instr = small.render("Press ESC to return to the main menu", True, (200, 200, 200))
         screen.blit(text, (WINDOW_WIDTH // 2 - text.get_width() // 2, WINDOW_HEIGHT // 2 - 60))
