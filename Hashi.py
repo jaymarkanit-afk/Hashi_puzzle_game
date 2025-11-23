@@ -27,7 +27,7 @@ def show_mode_screen(mode_name):
 
     Press ESC to return to the main menu.
     """
-    font = pygame.font.SysFont(None, 72)
+    font = pygame.font.SysFont(None, 90)
     small = pygame.font.SysFont(None, 28)
     while True:
         for event in pygame.event.get():
@@ -72,6 +72,7 @@ def main_menu():
     """
     font = pygame.font.SysFont(None, 55)
     small_font = pygame.font.SysFont(None, 28)
+    title_font = pygame.font.SysFont(None, 86)
 
 
     # Button layout
@@ -110,8 +111,12 @@ def main_menu():
             screen.blit(BG, (0, 0))
         else:
             screen.fill((0, 0, 0))
-        title_text = font.render("Hashi Puzzle Game", True, (255, 255, 255))
-        screen.blit(title_text, (WINDOW_WIDTH // 2 - title_text.get_width() // 2, 120))
+
+        title_line1 = title_font.render("Hashi", True, (255, 255, 255))
+        title_line2 = title_font.render("puzzle", True, (255, 255, 255))
+        y_start = 80
+        screen.blit(title_line1, (WINDOW_WIDTH // 2 - title_line1.get_width() // 2, y_start))
+        screen.blit(title_line2, (WINDOW_WIDTH // 2 - title_line2.get_width() // 2, y_start + title_line1.get_height() + 8))
 
         # Draw buttons with hover effect
         for rect, text_str in ((easy_rect, "Easy Mode"), (medium_rect, "Medium Mode"), (hard_rect, "Hard Mode")):
