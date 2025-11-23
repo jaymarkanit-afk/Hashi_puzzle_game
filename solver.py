@@ -107,6 +107,7 @@ class HashiGame:
                     island = Island(row, col, matrix[row][col])
                     self.islands.append(island)
                     self.island_grid[(row, col)] = island
+                    
 
 # ========== DRAWING FUNCTIONS ==========
 def draw_grid(tile_size):
@@ -124,6 +125,36 @@ def draw_grid(tile_size):
     
     # Blit the transparent grid onto the screen
     screen.blit(grid_surface, (0, 0))
+
+def draw_bridges(game):
+    """Draw all bridges between islands"""
+    drawn_pairs = set()
+    
+    for island in game.islands:
+        for neighbor, num_bridges in island.neighbors.items():
+            # Avoid drawing the same bridge twice
+            pair = tuple(sorted([id(island), id(neighbor)]))
+            if pair in drawn_pairs:
+                continue
+            drawn_pairs.add(pair)
+            
+            if num_bridges > 0:
+                x1, y1 = island.x, island.y
+                x2, y2 = neighbor.x, neighbor.y
+                
+                if num_bridges == 1:
+                    # Single bridge
+                    pygame.draw.line(screen, BLUE, (x1, y1), (x2, y2), 4)
+                else:
+                    # Double bridge - draw parallel lines
+                    if island.row == neighbor.row:  # Horizontal
+                        offset = 5
+                        pygame.draw.line(screen, BLUE, (x1, y1 - offset), (x2, y2 - offset), 4)
+                        pygame.draw.line(screen, BLUE, (x1, y1 + offset), (x2, y2 + offset), 4)
+                    else:  # Vertical
+                        offset = 5
+                        pygame.draw.line(screen, BLUE, (x1 - offset, y1), (x2 - offset, y2), 4)
+                        pygame.draw.line(screen, BLUE, (x1 + offset, y1), (x2 + offset, y2), 4)
 
 def draw_islands(game):
     """Draw all islands with their numbers"""
@@ -150,7 +181,7 @@ def draw_islands(game):
         text_rect = text.get_rect(center=(island.x, island.y))
         screen.blit(text, text_rect)
 
-
+# Main game instance
 game = HashiGame(island_matrix)
 
 def show_mode_screen(mode_name):
@@ -170,10 +201,12 @@ def show_mode_screen(mode_name):
                     return
 
         screen.fill((16, 24, 32))
+
         # draw the grid overlay
         draw_grid(tile_size)
+        draw_bridges(game)
         draw_islands(game)
-        
+
         text = font.render(f"{mode_name} Mode", True, (255, 255, 255))
         instr = small.render("Press ESC to return to the main menu", True, (200, 200, 200))
         screen.blit(text, (WINDOW_WIDTH // 2 - text.get_width() // 2, WINDOW_HEIGHT // 2 - 60))
