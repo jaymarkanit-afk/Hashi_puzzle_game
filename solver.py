@@ -18,11 +18,12 @@ YELLOW = (255, 255, 0)
 LIGHT_GREY = (150, 150, 150)
 
 # Grid setup
-tile_size = 80 
+tile_size = 80
 rows = WINDOW_HEIGHT // tile_size
 cols = WINDOW_WIDTH // tile_size
 FPS = 60
 clock = pygame.time.Clock()
+
 
 # Font for island numbers
 font = pygame.font.Font(None, 36)
@@ -107,84 +108,13 @@ class HashiGame:
                     self.islands.append(island)
                     self.island_grid[(row, col)] = island
     
-    def find_path_islands(self, island1, island2):
-        """Returns all islands along the path between two islands, or None if invalid"""
-        if island1.row == island2.row:  
-            row = island1.row
-            col_start = min(island1.col, island2.col)
-            col_end = max(island1.col, island2.col)
-            path = []
-            for col in range(col_start + 1, col_end):
-                if (row, col) in self.island_grid:
-                    return None  
-            return (island1, island2, 'h')
-        elif island1.col == island2.col:  
-            col = island1.col
-            row_start = min(island1.row, island2.row)
-            row_end = max(island1.row, island2.row)
-            for row in range(row_start + 1, row_end):
-                if (row, col) in self.island_grid:
-                    return None  
-            return (island1, island2, 'v')
-        return None 
-
-    def check_bridge_crossing(self, island1, island2):
-        """Check if adding bridge would cross existing bridges"""
-        for island_a in self.islands:
-            for island_b, count in island_a.neighbors.items():
-                if count == 0:
-                    continue
-        
-                if self.bridges_intersect(island1, island2, island_a, island_b):
-                    return True
-        return False
-
-    def toggle_bridge(self, island1, island2):
-        """Add or cycle bridges between two islands"""
-        path_info = self.find_path_islands(island1, island2)
-        if not path_info:
-            self.message = "Invalid bridge: must be horizontal/vertical with no islands between"
-            self.message_color = RED
-            return False
-        
-        current_bridges = island1.neighbors.get(island2, 0)
-        
-        if current_bridges == 0:
-            
-            if self.check_bridge_crossing(island1, island2):
-                self.message = "Bridges cannot cross!"
-                self.message_color = RED
-                return False
-            if island1.can_add_bridge(island2, current_bridges):
-                island1.add_bridge(island2)
-                self.message = "Bridge added (1)"
-                self.message_color = GREEN
-                return True
-            else:
-                self.message = "Cannot add bridge: degree constraint violated"
-                self.message_color = RED
-                return False
-        elif current_bridges == 1:
-            
-            if island1.can_add_bridge(island2, current_bridges):
-                island1.add_bridge(island2)
-                self.message = "Double bridge (2)"
-                self.message_color = GREEN
-                return True
-            else:
-                
-                island1.remove_bridge(island2)
-                self.message = "Bridge removed (0)"
-                self.message_color = YELLOW
-                return True
-        else:  
-            
-            island1.remove_bridge(island2)
-            island1.remove_bridge(island2)
-            self.message = "All bridges removed (0)"
-            self.message_color = YELLOW
-            return True 
+    def get_island_at_pos(self, x, y):
+        """Get island at screen position"""
+        col = x // tile_size
+        row = y // tile_size
+        return self.island_grid.get((row, col))
                     
+
 # ========== DRAWING FUNCTIONS ==========
 def draw_grid(tile_size):
     """Draw semi-transparent grid lines"""
