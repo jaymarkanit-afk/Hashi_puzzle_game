@@ -134,6 +134,29 @@ class HashiGame:
                     return None  
             return (island1, island2, 'v')
         return None
+    
+    def bridges_intersect(self, i1, i2, i3, i4):
+        """Check if two bridges intersect"""
+        
+        if i1.row == i2.row and i3.col == i4.col:
+            h_row = i1.row
+            h_col_min, h_col_max = min(i1.col, i2.col), max(i1.col, i2.col)
+            v_col = i3.col
+            v_row_min, v_row_max = min(i3.row, i4.row), max(i3.row, i4.row)
+            
+            if h_col_min < v_col < h_col_max and v_row_min < h_row < v_row_max:
+                return True
+        
+        if i1.col == i2.col and i3.row == i4.row:
+            v_col = i1.col
+            v_row_min, v_row_max = min(i1.row, i2.row), max(i1.row, i2.row)
+            h_row = i3.row
+            h_col_min, h_col_max = min(i3.col, i4.col), max(i3.col, i4.col)
+            
+            if h_col_min < v_col < h_col_max and v_row_min < h_row < v_row_max:
+                return True
+        
+        return False
 
     def toggle_bridge(self, island1, island2):
         """Add or cycle bridges between two islands"""
