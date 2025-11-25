@@ -137,7 +137,53 @@ class HashiGame:
         
                 if self.bridges_intersect(island1, island2, island_a, island_b):
                     return True
-        return False 
+        return False
+
+    def toggle_bridge(self, island1, island2):
+        """Add or cycle bridges between two islands"""
+        path_info = self.find_path_islands(island1, island2)
+        if not path_info:
+            self.message = "Invalid bridge: must be horizontal/vertical with no islands between"
+            self.message_color = RED
+            return False
+        
+        current_bridges = island1.neighbors.get(island2, 0)
+        
+        if current_bridges == 0:
+            
+            if self.check_bridge_crossing(island1, island2):
+                self.message = "Bridges cannot cross!"
+                self.message_color = RED
+                return False
+            if island1.can_add_bridge(island2, current_bridges):
+                island1.add_bridge(island2)
+                self.message = "Bridge added (1)"
+                self.message_color = GREEN
+                return True
+            else:
+                self.message = "Cannot add bridge: degree constraint violated"
+                self.message_color = RED
+                return False
+        elif current_bridges == 1:
+            
+            if island1.can_add_bridge(island2, current_bridges):
+                island1.add_bridge(island2)
+                self.message = "Double bridge (2)"
+                self.message_color = GREEN
+                return True
+            else:
+                
+                island1.remove_bridge(island2)
+                self.message = "Bridge removed (0)"
+                self.message_color = YELLOW
+                return True
+        else:  
+            
+            island1.remove_bridge(island2)
+            island1.remove_bridge(island2)
+            self.message = "All bridges removed (0)"
+            self.message_color = YELLOW
+            return True 
                     
 # ========== DRAWING FUNCTIONS ==========
 def draw_grid(tile_size):
