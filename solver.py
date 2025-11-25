@@ -18,12 +18,11 @@ YELLOW = (255, 255, 0)
 LIGHT_GREY = (150, 150, 150)
 
 # Grid setup
-tile_size = 80
+tile_size = 80 
 rows = WINDOW_HEIGHT // tile_size
 cols = WINDOW_WIDTH // tile_size
 FPS = 60
 clock = pygame.time.Clock()
-
 
 # Font for island numbers
 font = pygame.font.Font(None, 36)
@@ -96,7 +95,7 @@ class HashiGame:
         self.selected_island = None
         self.ai_mode = False
         self.show_hints = False
-        self.solution_steps = []
+        self.solution_steps = []    
         self.step_index = 0
         self.message = "Click islands to connect with bridges!"
         self.message_color = WHITE
@@ -107,8 +106,28 @@ class HashiGame:
                     island = Island(row, col, matrix[row][col])
                     self.islands.append(island)
                     self.island_grid[(row, col)] = island
+    
+    def find_path_islands(self, island1, island2):
+        """Returns all islands along the path between two islands, or None if invalid"""
+        if island1.row == island2.row:  
+            row = island1.row
+            col_start = min(island1.col, island2.col)
+            col_end = max(island1.col, island2.col)
+            path = []
+            for col in range(col_start + 1, col_end):
+                if (row, col) in self.island_grid:
+                    return None  
+            return (island1, island2, 'h')
+        elif island1.col == island2.col:  
+            col = island1.col
+            row_start = min(island1.row, island2.row)
+            row_end = max(island1.row, island2.row)
+            for row in range(row_start + 1, row_end):
+                if (row, col) in self.island_grid:
+                    return None  
+            return (island1, island2, 'v')
+        return None  
                     
-
 # ========== DRAWING FUNCTIONS ==========
 def draw_grid(tile_size):
     """Draw semi-transparent grid lines"""

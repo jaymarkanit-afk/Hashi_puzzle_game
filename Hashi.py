@@ -11,7 +11,7 @@ pygame.display.set_caption("Hashi Puzzle Game")
 
 # Prefer jpg then png.
 BG = None
-try:
+try: 
     BG = pygame.image.load("background.jpg").convert()
 except Exception:
     try:
