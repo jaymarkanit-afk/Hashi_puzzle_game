@@ -126,7 +126,18 @@ class HashiGame:
                 if (row, col) in self.island_grid:
                     return None  
             return (island1, island2, 'v')
-        return None  
+        return None 
+
+    def check_bridge_crossing(self, island1, island2):
+        """Check if adding bridge would cross existing bridges"""
+        for island_a in self.islands:
+            for island_b, count in island_a.neighbors.items():
+                if count == 0:
+                    continue
+        
+                if self.bridges_intersect(island1, island2, island_a, island_b):
+                    return True
+        return False 
                     
 # ========== DRAWING FUNCTIONS ==========
 def draw_grid(tile_size):
