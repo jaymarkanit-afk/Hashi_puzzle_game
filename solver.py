@@ -157,6 +157,17 @@ class HashiGame:
                 return True
         
         return False
+    
+    def check_bridge_crossing(self, island1, island2):
+        """Check if adding bridge would cross existing bridges"""
+        for island_a in self.islands:
+            for island_b, count in island_a.neighbors.items():
+                if count == 0:
+                    continue
+        
+                if self.bridges_intersect(island1, island2, island_a, island_b):
+                    return True
+        return False
 
     def toggle_bridge(self, island1, island2):
         """Add or cycle bridges between two islands"""
@@ -204,16 +215,6 @@ class HashiGame:
             self.message_color = YELLOW
             return True  
     
-    def check_bridge_crossing(self, island1, island2):
-        """Check if adding bridge would cross existing bridges"""
-        for island_a in self.islands:
-            for island_b, count in island_a.neighbors.items():
-                if count == 0:
-                    continue
-        
-                if self.bridges_intersect(island1, island2, island_a, island_b):
-                    return True
-        return False
                     
 
 # ========== DRAWING FUNCTIONS ==========

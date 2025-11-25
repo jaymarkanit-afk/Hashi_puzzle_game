@@ -79,7 +79,6 @@ def main_menu():
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     return
-                
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if easy_rect.collidepoint(event.pos):
                     easy_mode()
