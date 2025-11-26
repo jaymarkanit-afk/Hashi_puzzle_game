@@ -247,6 +247,30 @@ class HashiGame:
         
         return neighbors
     
+    def get_hint(self):
+        """Provide a hint for the next move"""
+        # Simple hint: find island with only one valid way to satisfy its degree
+        for island in self.islands:
+            current_degree = island.get_current_degree()
+            needed = island.required_degree - current_degree
+            
+            if needed <= 0:
+                continue
+            
+            neighbors = self.get_possible_neighbors(island)
+            valid_neighbors = []
+            
+            for neighbor in neighbors:
+                current_bridges = island.neighbors.get(neighbor, 0)
+                if current_bridges < 2:
+                    if not self.check_bridge_crossing(island, neighbor):
+                        if island.can_add_bridge(neighbor, current_bridges):
+                            valid_neighbors.append(neighbor)
+            
+            if len(valid_neighbors) == 1 and needed > 0:
+                return (island, valid_neighbors[0])
+        
+        return None
       
     
                     
