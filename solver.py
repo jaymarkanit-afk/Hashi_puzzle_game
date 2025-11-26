@@ -398,6 +398,16 @@ def draw_ui(game):
         pygame.draw.rect(screen, BLACK, win_rect.inflate(20, 10))
         screen.blit(win_text, win_rect)
 
+def draw_hint(game, hint):
+    """Draw hint arrow"""
+    if hint:
+        island1, island2 = hint
+        # Draw animated arrow or highlight
+        pygame.draw.line(screen, YELLOW, (island1.x, island1.y), (island2.x, island2.y), 3)
+        # Draw circles around the islands
+        pygame.draw.circle(screen, YELLOW, (island1.x, island1.y), tile_size // 3 + 8, 3)
+        pygame.draw.circle(screen, YELLOW, (island2.x, island2.y), tile_size // 3 + 8, 3)
+
 # Main game instance
 game = HashiGame(island_matrix)
 
@@ -408,6 +418,7 @@ def show_mode_screen(mode_name):
     """
     font = pygame.font.SysFont(None, 90)
     small = pygame.font.SysFont(None, 28)
+    hint = None
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -441,9 +452,26 @@ def show_mode_screen(mode_name):
                     else:
                         # Clicked empty space - deselect
                         game.selected_island = None
+
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return
+                elif event.key == pygame.K_r:
+                    # Reset puzzle
+                    game.reset()
+                    hint = None
+                elif event.key == pygame.K_s:
+                    pass
+
+                elif event.key == pygame.K_h:
+                    # Show hint
+                    hint = game.get_hint()
+                    if hint:
+                        game.message = "Hint: Try connecting these islands!"
+                        game.message_color = YELLOW
+                    else:
+                        game.message = "No obvious hints available"
+                        game.message_color = WHITE
 
         screen.fill((16, 24, 32))
 
@@ -451,6 +479,8 @@ def show_mode_screen(mode_name):
         draw_grid(tile_size)
         draw_bridges(game)
         draw_islands(game)
+        if hint:
+            draw_hint(game, hint)
         draw_ui(game)
 
         text = font.render(f"{mode_name} Mode", True, (255, 255, 255))
