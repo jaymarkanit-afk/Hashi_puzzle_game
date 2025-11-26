@@ -213,7 +213,41 @@ class HashiGame:
             island1.remove_bridge(island2)
             self.message = "All bridges removed (0)"
             self.message_color = YELLOW
-            return True  
+            return True
+
+    def get_possible_neighbors(self, island):
+        """Get all islands that could potentially connect to this island"""
+        neighbors = []
+        
+        for other in self.islands:
+            if other != island and other.row == island.row:
+                
+                col_min = min(island.col, other.col)
+                col_max = max(island.col, other.col)
+                blocked = False
+                for col in range(col_min + 1, col_max):
+                    if (island.row, col) in self.island_grid:
+                        blocked = True
+                        break
+                if not blocked:
+                    neighbors.append(other)
+        
+        for other in self.islands:
+            if other != island and other.col == island.col:
+                
+                row_min = min(island.row, other.row)
+                row_max = max(island.row, other.row)
+                blocked = False
+                for row in range(row_min + 1, row_max):
+                    if (row, island.col) in self.island_grid:
+                        blocked = True
+                        break
+                if not blocked:
+                    neighbors.append(other)
+        
+        return neighbors
+    
+      
     
                     
 
