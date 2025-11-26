@@ -1,5 +1,5 @@
 import pygame
-
+from collections import deque
 pygame.init()
 
 WINDOW_WIDTH = 880
@@ -246,6 +246,24 @@ class HashiGame:
                     neighbors.append(other)
         
         return neighbors
+
+    def is_connected(self):
+        """Check if all islands form a connected graph (BFS)"""
+        if not self.islands:
+            return True
+        
+        visited = set()
+        queue = deque([self.islands[0]])
+        visited.add(self.islands[0])
+        
+        while queue:
+            island = queue.popleft()
+            for neighbor in island.neighbors:
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    queue.append(neighbor)
+        
+        return len(visited) == len(self.islands)
     
     def check_win(self):
         """Check if puzzle is solved"""
