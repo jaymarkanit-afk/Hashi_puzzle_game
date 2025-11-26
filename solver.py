@@ -247,6 +247,19 @@ class HashiGame:
         
         return neighbors
     
+    def check_win(self):
+        """Check if puzzle is solved"""
+        
+        for island in self.islands:
+            if island.get_current_degree() != island.required_degree:
+                return False
+        
+       
+        if not self.is_connected():
+            return False
+        
+        return True
+    
     def get_hint(self):
         """Provide a hint for the next move"""
         # Simple hint: find island with only one valid way to satisfy its degree
