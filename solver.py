@@ -272,9 +272,6 @@ class HashiGame:
         
         return None
       
-    
-                    
-
 # ========== DRAWING FUNCTIONS ==========
 def draw_grid(tile_size):
     """Draw semi-transparent grid lines"""
@@ -347,6 +344,29 @@ def draw_islands(game):
         text_rect = text.get_rect(center=(island.x, island.y))
         screen.blit(text, text_rect)
 
+def draw_ui(game):
+    """Draw UI elements: instructions, status, buttons"""
+    # Message bar at top
+    msg_surface = small_font.render(game.message, True, game.message_color)
+    screen.blit(msg_surface, (10, 10))
+    
+    # Instructions at bottom
+    instructions = [
+        "Click two islands to connect | R: Reset | S: AI Solve | H: Hint | ESC: Quit"
+    ]
+    y_offset = WINDOW_HEIGHT - 30
+    for instruction in instructions:
+        text = small_font.render(instruction, True, LIGHT_GREY)
+        screen.blit(text, (10, y_offset))
+        y_offset += 20
+    
+    # Win check display
+    if game.check_win():
+        win_text = font.render("PUZZLE SOLVED! Congratulations!", True, GREEN)
+        win_rect = win_text.get_rect(center=(WINDOW_WIDTH // 2, 30))
+        pygame.draw.rect(screen, BLACK, win_rect.inflate(20, 10))
+        screen.blit(win_text, win_rect)
+
 # Main game instance
 game = HashiGame(island_matrix)
 
@@ -400,6 +420,7 @@ def show_mode_screen(mode_name):
         draw_grid(tile_size)
         draw_bridges(game)
         draw_islands(game)
+        draw_ui(game)
 
         text = font.render(f"{mode_name} Mode", True, (255, 255, 255))
         instr = small.render("Press ESC to return to the main menu", True, (200, 200, 200))
