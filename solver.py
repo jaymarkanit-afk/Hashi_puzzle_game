@@ -29,19 +29,6 @@ clock = pygame.time.Clock()
 font = pygame.font.Font(None, 36)
 small_font = pygame.font.Font(None, 24)
 
-# Island matrix for the puzzle 
-island_matrix = [
-    [2, 0, 0, 0, 0, 4, 0, 5, 0, 0, 4],  # row 0 (islands)
-    [0, 4, 0, 4, 0, 0, 0, 0, 0, 1, 0],  # row 1
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # row 2
-    [0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 3],  # row 3
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # row 4
-    [0, 2, 0, 0, 0, 0, 0, 2, 0, 0, 2],  # row 5
-    [0, 0, 0, 4, 0, 6, 0, 0, 0, 4, 0],  # row 6
-    [3, 0, 0, 0, 0, 0, 2, 0, 0, 0, 1],  # row 7
-    [0, 0, 2, 0, 0, 0, 0, 0, 0, 3, 0],  # row 8
-]
-
 # ========== ISLAND AND GRAPH CLASSES ==========
 class Island:
     """Represents an island node in the puzzle"""
@@ -574,14 +561,13 @@ def draw_hint(game, hint):
         pygame.draw.circle(screen, YELLOW, (island1.x, island1.y), tile_size // 3 + 8, 3)
         pygame.draw.circle(screen, YELLOW, (island2.x, island2.y), tile_size // 3 + 8, 3)
 
-# Main game instance
-game = HashiGame(island_matrix)
-
-def show_mode_screen(mode_name):
+def show_mode_screen(mode_name, matrix):
     """Simple feedback screen shown when a mode is selected.
 
     Press ESC to return to the main menu.
     """
+    # create a fresh game instance for this mode so each difficulty starts clean
+    game = HashiGame(matrix)
     font = pygame.font.SysFont(None, 90)
     small = pygame.font.SysFont(None, 28)
     hint = None

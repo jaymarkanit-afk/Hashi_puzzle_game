@@ -8,6 +8,30 @@ WINDOW_HEIGHT = 720
 screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("Hashi Puzzle Game")
 
+easy_matrix = [
+    [2, 0, 0, 0, 0, 4, 0, 5, 0, 0, 4],  # row 0 (islands)
+    [0, 4, 0, 4, 0, 0, 0, 0, 0, 1, 0],  # row 1
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # row 2
+    [0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 3],  # row 3
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # row 4
+    [0, 2, 0, 0, 0, 0, 0, 2, 0, 0, 2],  # row 5
+    [0, 0, 0, 4, 0, 6, 0, 0, 0, 4, 0],  # row 6
+    [3, 0, 0, 0, 0, 0, 2, 0, 0, 0, 1],  # row 7
+    [0, 0, 2, 0, 0, 0, 0, 0, 0, 3, 0],  # row 8
+]
+
+medium_matrix = [
+    [2, 0, 0, 0, 4, 0, 0, 0, 4, 0, 2],  # row 0 (islands)
+    [0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0],  # row 1
+    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],  # row 2
+    [4, 0, 0, 5, 0, 0, 3, 0, 0, 0, 0],  # row 3
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # row 4
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # row 5
+    [0, 0, 0, 0, 2, 0, 3, 0, 0, 0, 0],  # row 6
+    [1, 0, 0, 2, 0, 2, 0, 1, 0, 0, 0],  # row 7
+    [0, 2, 0, 0, 0, 0, 0, 0, 6, 0, 4],  # row 8
+]
+
 
 # Prefer jpg then png.
 BG = None
@@ -27,17 +51,21 @@ if BG:
 
 def easy_mode():
     pygame.display.set_caption("Easy Mode - Hashi Puzzle Game")
-    show_mode_screen("Easy")
+    from solver import show_mode_screen
+    show_mode_screen("Easy", easy_matrix)
 
 
 def medium_mode():
     pygame.display.set_caption("Medium Mode - Hashi Puzzle Game")
-    show_mode_screen("Medium")
+    from solver import show_mode_screen
+    show_mode_screen("Medium", medium_matrix)
 
 
 def hard_mode():
     pygame.display.set_caption("Hard Mode - Hashi Puzzle Game")
-    show_mode_screen("Hard")
+    from solver import show_mode_screen
+    # no hard matrix provided yet: reuse medium as placeholder
+    show_mode_screen("Hard", medium_matrix)
 
 
 FPS = 60
