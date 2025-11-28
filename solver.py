@@ -278,7 +278,90 @@ class HashiGame:
         
         return neighbors
 
-    
+    def solve_puzzle(self):
+        """AI Solver using optimized constraint propagation + backtracking"""
+        self.solution_steps = []
+        
+        for island in self.islands:
+            island.neighbors.clear()
+        
+        # Try to solve with optimized algorithm
+        max_iterations = 10000 
+        iteration = 0
+        
+        changed = True
+        while changed and iteration < max_iterations:
+            changed = False
+            iteration += 1
+            
+            for island in self.islands:
+                if island.get_current_degree() >= island.required_degree:
+                    continue
+                
+                needed = island.required_degree - island.get_current_degree()
+                neighbors = self.get_possible_neighbors(island)
+                
+                # Filter to valid neighbors
+                valid_neighbors = []
+                for neighbor in neighbors:
+                    current_bridges = island.neighbors.get(neighbor, 0)
+                    if current_bridges < 2:
+                        if not self.check_bridge_crossing(island, neighbor):
+                            if island.can_add_bridge(neighbor, current_bridges):
+                                valid_neighbors.append(neighbor)
+                
+                # Forced move: only one possible neighbor
+                if len(valid_neighbors) == 1 and needed > 0:
+                    neighbor = valid_neighbors[0]
+                    bridges_to_add = min(2 - island.neighbors.get(neighbor, 0), needed)
+                    for _ in range(bridges_to_add):
+                        if island.can_add_bridge(neighbor, 0):
+                            island.add_bridge(neighbor)
+                            changed = True
+                else:
+                    # Stronger CSP rule: if the total possible capacity across
+                    # all valid neighbors equals the needed amount, then all
+                    # those capacities must be used (forward-checking).
+                    if needed > 0 and valid_neighbors:
+                        cap_list = []
+                        total_cap = 0
+                        for nb in valid_neighbors:
+                            cur = island.neighbors.get(nb, 0)
+                            cap_nb = 2 - cur
+                            # limit by neighbor remaining need
+                            nb_remain = nb.required_degree - nb.get_current_degree()
+                            if nb_remain <= 0:
+                                continue
+                            cap = min(cap_nb, nb_remain)
+                            if cap > 0:
+                                cap_list.append((nb, cap))
+                                total_cap += cap
+
+                        if total_cap > 0 and total_cap == needed:
+                            # enforce these capacities now
+                            for nb, cap in cap_list:
+                                add = min(cap, 2 - island.neighbors.get(nb, 0))
+                                for _ in range(add):
+                                    if island.can_add_bridge(nb, 0) and not self.check_bridge_crossing(island, nb):
+                                        island.add_bridge(nb)
+                                        changed = True
+        
+        # Check if solved
+        if self.check_win():
+            self.message = "Puzzle solved by AI!"
+            self.message_color = GREEN
+            return True
+        
+        # If not fully solved, try lightweight backtracking
+        if self._smart_backtrack(0, 0):
+            self.message = "Puzzle solved by AI!"
+            self.message_color = GREEN
+            return True
+        else:
+            self.message = "Partial solution - try solving manually!"
+            self.message_color = YELLOW
+            return False
+
     def get_hint(self):
         """Provide a hint for the next move"""
         # Simple hint: find island with only one valid way to satisfy its degree
