@@ -362,6 +362,80 @@ class HashiGame:
             self.message_color = YELLOW
             return False
 
+    def _smart_backtrack(self, island_idx, depth):
+        """Optimized recursive backtracking with depth limit"""
+        # Depth limit to prevent freezing
+        if depth > 100:
+            return False
+            
+        # Base case: all islands processed
+        if island_idx >= len(self.islands):
+            return self.check_win()
+        
+        current_island = self.islands[island_idx]
+        
+        # Skip if already satisfied
+        if current_island.get_current_degree() == current_island.required_degree:
+            return self._smart_backtrack(island_idx + 1, depth)
+        
+        # Early termination: if impossible to satisfy
+        needed = current_island.required_degree - current_island.get_current_degree()
+        if needed <= 0:
+            return self._smart_backtrack(island_idx + 1, depth)
+        
+        # Get valid neighbors
+        possible_neighbors = self.get_possible_neighbors(current_island)
+        valid_neighbors = []
+        
+        for neighbor in possible_neighbors:
+            current_bridges = current_island.neighbors.get(neighbor, 0)
+            if current_bridges < 2:
+                if not self.check_bridge_crossing(current_island, neighbor):
+                    if current_island.can_add_bridge(neighbor, current_bridges):
+                        valid_neighbors.append(neighbor)
+        
+        # If no valid neighbors but still needs bridges, fail
+        if not valid_neighbors and needed > 0:
+            return False
+        
+        # Try adding bridges to each valid neighbor
+        for neighbor in valid_neighbors:
+            for num_bridges in [1, 2]:
+                current_bridges = current_island.neighbors.get(neighbor, 0)
+                
+                if current_bridges + num_bridges > 2:
+                    continue
+                
+                if current_bridges + num_bridges > needed:
+                    continue
+                
+                # Add bridges
+                added = []
+                success = True
+                for _ in range(num_bridges):
+                    if current_island.can_add_bridge(neighbor, 0):
+                        if not self.check_bridge_crossing(current_island, neighbor):
+                            current_island.add_bridge(neighbor)
+                            added.append(neighbor)
+                        else:
+                            success = False
+                            break
+                    else:
+                        success = False
+                        break
+                
+                if success and added:
+                    # Try to continue
+                    if self._smart_backtrack(island_idx, depth + 1):
+                        return True
+                    
+                    # Backtrack
+                    for _ in added:
+                        current_island.remove_bridge(neighbor)
+        
+        # Try skipping this island
+        return self._smart_backtrack(island_idx + 1, depth + 1)
+
     def get_hint(self):
         """Provide a hint for the next move"""
         # Simple hint: find island with only one valid way to satisfy its degree
