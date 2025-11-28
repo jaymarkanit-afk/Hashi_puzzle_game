@@ -460,7 +460,15 @@ class HashiGame:
                 return (island, valid_neighbors[0])
         
         return None
-      
+
+    def reset(self):
+        """Reset all bridges"""
+        for island in self.islands:
+            island.neighbors.clear()
+        self.selected_island = None
+        self.message = "Puzzle reset!"
+        self.message_color = YELLOW
+        
 # ========== DRAWING FUNCTIONS ==========
 def draw_grid(tile_size):
     """Draw semi-transparent grid lines"""
