@@ -135,6 +135,17 @@ class HashiGame:
             return (island1, island2, 'v')
         return None
     
+    def check_bridge_crossing(self, island1, island2):
+        """Check if adding bridge would cross existing bridges"""
+        for island_a in self.islands:
+            for island_b, count in island_a.neighbors.items():
+                if count == 0:
+                    continue
+        
+                if self.bridges_intersect(island1, island2, island_a, island_b):
+                    return True
+        return False
+    
     def bridges_intersect(self, i1, i2, i3, i4):
         """Check if two bridges intersect"""
         
@@ -156,17 +167,6 @@ class HashiGame:
             if h_col_min < v_col < h_col_max and v_row_min < h_row < v_row_max:
                 return True
         
-        return False
-    
-    def check_bridge_crossing(self, island1, island2):
-        """Check if adding bridge would cross existing bridges"""
-        for island_a in self.islands:
-            for island_b, count in island_a.neighbors.items():
-                if count == 0:
-                    continue
-        
-                if self.bridges_intersect(island1, island2, island_a, island_b):
-                    return True
         return False
 
     def toggle_bridge(self, island1, island2):
@@ -215,6 +215,19 @@ class HashiGame:
             self.message_color = YELLOW
             return True
 
+    def check_win(self):
+        """Check if puzzle is solved"""
+        
+        for island in self.islands:
+            if island.get_current_degree() != island.required_degree:
+                return False
+        
+       
+        if not self.is_connected():
+            return False
+        
+        return True
+
     def get_possible_neighbors(self, island):
         """Get all islands that could potentially connect to this island"""
         neighbors = []
@@ -247,36 +260,6 @@ class HashiGame:
         
         return neighbors
 
-    def is_connected(self):
-        """Check if all islands form a connected graph (BFS)"""
-        if not self.islands:
-            return True
-        
-        visited = set()
-        queue = deque([self.islands[0]])
-        visited.add(self.islands[0])
-        
-        while queue:
-            island = queue.popleft()
-            for neighbor in island.neighbors:
-                if neighbor not in visited:
-                    visited.add(neighbor)
-                    queue.append(neighbor)
-        
-        return len(visited) == len(self.islands)
-    
-    def check_win(self):
-        """Check if puzzle is solved"""
-        
-        for island in self.islands:
-            if island.get_current_degree() != island.required_degree:
-                return False
-        
-       
-        if not self.is_connected():
-            return False
-        
-        return True
     
     def get_hint(self):
         """Provide a hint for the next move"""
