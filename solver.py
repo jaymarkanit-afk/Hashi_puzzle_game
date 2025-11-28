@@ -468,7 +468,7 @@ class HashiGame:
         self.selected_island = None
         self.message = "Puzzle reset!"
         self.message_color = YELLOW
-        
+
 # ========== DRAWING FUNCTIONS ==========
 def draw_grid(tile_size):
     """Draw semi-transparent grid lines"""
@@ -627,8 +627,15 @@ def show_mode_screen(mode_name):
                     game.reset()
                     hint = None
                 elif event.key == pygame.K_s:
-                    pass
-
+                        # AI Solve
+                    game.message = "AI Solver running..."
+                    game.message_color = YELLOW
+                    draw_grid(tile_size)
+                    draw_islands(game)
+                    draw_ui(game)
+                    pygame.display.update()
+                    game.solve_puzzle()
+                    hint = None
                 elif event.key == pygame.K_h:
                     # Show hint
                     hint = game.get_hint()
