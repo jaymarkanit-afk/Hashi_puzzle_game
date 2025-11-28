@@ -215,6 +215,24 @@ class HashiGame:
             self.message_color = YELLOW
             return True
 
+    def is_connected(self):
+        """Check if all islands form a connected graph (BFS)"""
+        if not self.islands:
+            return True
+        
+        visited = set()
+        queue = deque([self.islands[0]])
+        visited.add(self.islands[0])
+        
+        while queue:
+            island = queue.popleft()
+            for neighbor in island.neighbors:
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    queue.append(neighbor)
+        
+        return len(visited) == len(self.islands)
+
     def check_win(self):
         """Check if puzzle is solved"""
         
