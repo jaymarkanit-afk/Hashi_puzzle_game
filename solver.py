@@ -269,6 +269,7 @@ class HashiGame:
         """AI Solver using optimized constraint propagation + backtracking"""
         self.solution_steps = []
         
+        
         for island in self.islands:
             island.neighbors.clear()
         
