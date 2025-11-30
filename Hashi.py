@@ -9,7 +9,7 @@ screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("Hashi Puzzle Game")
 
 easy_matrix = [
-    [2, 0, 0, 0, 0, 4, 0, 5, 0, 0, 4],  # row 0 (islands)
+    [2, 0, 0, 0, 0, 4, 0, 5, 0, 0, 4],  # row 0 
     [0, 4, 0, 4, 0, 0, 0, 0, 0, 1, 0],  # row 1
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # row 2
     [0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 3],  # row 3

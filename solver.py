@@ -1,5 +1,6 @@
 import pygame
 from collections import deque
+
 pygame.init()
 
 WINDOW_WIDTH = 880
@@ -269,7 +270,6 @@ class HashiGame:
         """AI Solver using optimized constraint propagation + backtracking"""
         self.solution_steps = []
         
-        
         for island in self.islands:
             island.neighbors.clear()
         
@@ -285,7 +285,7 @@ class HashiGame:
             for island in self.islands:
                 if island.get_current_degree() >= island.required_degree:
                     continue
-                
+
                 needed = island.required_degree - island.get_current_degree()
                 neighbors = self.get_possible_neighbors(island)
                 
@@ -307,12 +307,11 @@ class HashiGame:
                             island.add_bridge(neighbor)
                             changed = True
                 else:
-                    # Stronger CSP rule: if the total possible capacity across
                     # all valid neighbors equals the needed amount, then all
-                    # those capacities must be used (forward-checking).
-                    if needed > 0 and valid_neighbors:
+                    # those capacities must be used.
+                    if needed > 0 and valid_neighbors: # The island still need bridges
                         cap_list = []
-                        total_cap = 0
+                        total_cap = 0 # How many bridges can be added in total 
                         for nb in valid_neighbors:
                             cur = island.neighbors.get(nb, 0)
                             cap_nb = 2 - cur
@@ -569,6 +568,7 @@ def show_mode_screen(mode_name, matrix):
     """
     # create a fresh game instance for this mode so each difficulty starts clean
     game = HashiGame(matrix)
+
     font = pygame.font.SysFont(None, 90)
     small = pygame.font.SysFont(None, 28)
     hint = None
