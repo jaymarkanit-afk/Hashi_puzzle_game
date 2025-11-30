@@ -310,7 +310,7 @@ class HashiGame:
                     # all valid neighbors equals the needed amount, then all
                     # those capacities must be used.
                     if needed > 0 and valid_neighbors: # The island still need bridges
-                        cap_list = []
+                        cap_list = [] 
                         total_cap = 0 # How many bridges can be added in total 
                         for nb in valid_neighbors:
                             cur = island.neighbors.get(nb, 0)
